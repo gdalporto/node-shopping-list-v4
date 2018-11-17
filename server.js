@@ -57,11 +57,11 @@ app.put('/shopping-list/:id', jsonParser, (req, res) => {
   for (let i=0; i<requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
-      const message = `Missing \`${field}\` in request body`
+      const message = `Missing \`${field}\` in request body`;
       console.error(message);
       return res.status(400).send(message);
-    }
-  }
+    };
+  };
 
   if (req.params.id !== req.body.id) {
     const message = `Request path id (${req.params.id}) and request body id (${req.body.id}) must match`;
@@ -76,6 +76,8 @@ app.put('/shopping-list/:id', jsonParser, (req, res) => {
   });
   res.status(204).end();
 });
+
+
 
 // when DELETE request comes in with an id in path,
 // try to delete that item from ShoppingList.
@@ -110,6 +112,35 @@ app.delete('/recipes/:id', (req, res) => {
   console.log(`Deleted recipe \`${req.params.ID}\``);
   res.status(204).end();
 });
+
+//--------------------------------
+app.put('/recipes/:id',jsonParser,(req,res) => {
+  console.log(req.body, req.params);
+  const varList = ['id','name','ingredients'];
+  // check that id, name and ingredients variables present
+  for(let i=0; i<varList.length; i++){
+    if(!(varList[i] in req.body)){
+      const message = `Error, ${varList[i]} parameter not found in body`;
+      console.error(message);
+      return res.status(400).send(message);
+    };
+  };
+
+
+  if (!(req.params.id === req.body.id)){
+    const message = `Error id in params list ${req.params.id} must equal id in body ${req.body.id}`;
+    return res.status(400).send(message);
+  }
+
+  console.log(`updateing recipe list for id ${req.body.id}`);
+  const item=Recipes.update(req.body);
+  return res.status(204).json(item);
+
+
+});
+
+
+
 
 app.listen(process.env.PORT || 8080, () => {
   console.log(`Your app is listening on port ${process.env.PORT || 8080}`);
